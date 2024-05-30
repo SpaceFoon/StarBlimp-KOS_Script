@@ -58,7 +58,7 @@ function printBlimp {
     PRINT"  |=-                -=| (".
     PRINT"   \'.              .'/\  \".
     PRINT"    '-.,_____ _____.-'  '-'".
-    PRINT"         [_____]=8".
+    PRINT"jgs       [_____]=8".
 }
 function printWelcome {
     clearScreen.
@@ -67,9 +67,25 @@ function printWelcome {
     print "=       AIRSHIP LAUNCH CONTROL SYSTEM    =".
     print "==========================================".
     printBlimp().
+    wait 1.
     print "==========================================".
     print "=    PROGRAM 1: SINGLE STAGE TO EVE      =".
     print "==========================================".
+    print "               .       ___---___                    .                   ".
+    print "     .              .--\        --.     .     .         .".
+    print "                  ./.;_.\     __/~ \.     ".
+    print "                 /;  / `-'  __\    . \                            ".
+    print "        .       / ,--'     / .   .;   \        |".
+    print "               | .|       /       __   |      -O-       .".
+    print "              |__/    __ |  . ;   \ | . |      |".
+    print "              |      /  \\_    . ;| \___|    ".
+    print " .    o       |      \  .~\\___,--'     |           .".
+    print "               |     | . ; ~~~~\_    __|".
+    print "  |             \    \   .  .  ; \  /_/   .".
+    print " -O-        .    \   /         . |  ~/                  .".
+    print "  |    .          ~\ \   .      /  /~          o".
+    print ".                   ~--___ ; ___--~       ".
+    print "               .          ---         .              -JT".
 }
 printWelcome().
 
@@ -82,9 +98,8 @@ set desiredRoll to 0.      // Level
 printTimestamped("Applying brakes and raising legs!").
 brakes on.
 TOGGLE AG1.
-printDivider("WARNING: TURN ON BALLON AUTO PITCH OR YOU WILL DIE").
-printTimestamped("don't worry we figure that out! If your bouyancy is at -5600, your good!").
-PRINT "Press any key to confirm you will die if you don't do that...".
+printDivider("WARNING: DON'T TOUCH SAS, RCS, OR STAGING.").
+PRINT "Press any key to confirm you will die if you do that...".
 WAIT .1.
 WAIT UNTIL terminal:input:haschar.
 

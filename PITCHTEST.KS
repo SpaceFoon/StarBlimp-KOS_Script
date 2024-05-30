@@ -6,14 +6,14 @@ function adjustPitch {
     // Get the initial pitch
     set initialPitch to ship:facing:vector:pitch.
     set pitchDifference to targetPitch - initialPitch.
+    set timeStep to 0.1.  // Time step for the loop, adjust as needed
     set steps to duration / timeStep.
 
     // Loop to adjust the pitch gradually
     for i in range(steps) {
-
         set currentPitch to initialPitch + (pitchDifference * (i / steps)).
         lock steering to heading(currentPitch, ship:facing:vector:heading).
-        wait 0.5.
+        wait timeStep.
     }
 
     // Ensure final target pitch is set accurately

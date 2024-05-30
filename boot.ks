@@ -7,27 +7,91 @@
 //     set s to round(MOD(t, 60)).
 //     return (h:toString():padleft(2,"0") + ":" + m:toString():padleft(2,"0") + ":" + s:toString():padleft(2,"0")).
 // }
-RUNPATH("../time.ks").
+// WE DID IT REDDIT!
+//https://www.reddit.com/r/Kos/comments/31r8hj/time_and_easiest_way_to_produce_a_timespan_from/
+
+// left-pad with zeroes. Assumes you want a length of 2 if not specified
+FUNCTION padZ { PARAMETER t, l is 2.
+    RETURN (""+t):PADLEFT(l):REPLACE(" ","0").
+}
+
+// returns elapsed time in the format "[T+YY-DDD HH:MM:SS]"
+FUNCTION formatMET
+{
+  LOCAL ts IS TIME + MISSIONTIME - TIME:SECONDS.
+  RETURN "[T+" 
+    + padZ(ts:YEAR - 1) + "-" // subtracts 1 to get years elapsed, not game year
+    + padZ(ts:DAY - 1,3) + " " // subtracts 1 to get days elapsed, not day of year. What is the 3 for?
+    + padZ(ts:HOUR) + ":"
+    + padZ(ts:MINUTE) + ":"
+    + padZ(ROUND(ts:SECOND))+ "]".
+}
+// print formatMET.
+
+FUNCTION formatUNI
+{
+  LOCAL ts IS TIME.
+  RETURN "[Y" 
+    + round(ts:YEAR) + ", D"
+    + padZ(ts:DAY) + ", "
+    + padZ(ts:HOUR) + ":"
+    + padZ(ts:MINUTE) + ":"
+    + padZ(ROUND(ts:SECOND))+ "]".
+}
+// print formatUNI.
+
+// Function to print a formatted message with a timestamp
+function printTimestamped {
+    parameter msg.
+    print "[" + formatMET + "] " + msg.
+}
+wait until ship:unpacked.
+set startTime to time:seconds.
+PRINT"===============================".
+PRINT"".
+PRINT"" + SHIP:NAME + " booting up...".
+PRINT"".
+PRINT"===============================".
+PRINT"".
+PRINT "Press any key to continue...".
+WAIT .2.
+WAIT UNTIL terminal:input:haschar.
 
 CLEARSCREEN.
-PRINT "===============================".
-PRINT "         BOOT SEQUENCE         ".
-PRINT "===============================".
-PRINT "Welcome to the Blimp Control System!".
-PRINT "Initializing systems.".
-WAIT .2.
-PRINT "Initializing systems..".
-WAIT .2.
-PRINT "Initializing systems...".
-WAIT .2.
-PRINT "Initializing systems.".
-WAIT .2.
-PRINT "Initializing systems..".
-WAIT .2.
-PRINT "Initializing systems...".
-WAIT .2.
+function boot {
+    parameter extradots.
+    parameter startTime.
+    CLEARSCREEN.
+    PRINT "===============================".
+    PRINT "         BOOT SEQUENCE         ".
+    PRINT "===============================".
+    PRINT"       _..--=--..._".
+    PRINT"    .-'            '-.  .-.".
+    PRINT"   /.'   BLIMPS!    '.\/  /".
+    PRINT"  |=-                -=| (".
+    PRINT"   \'.              .'/\  \".
+    PRINT"    '-.,_____ _____.-'  '-'".
+    PRINT"         [_____]=8".
+    PRINT "Welcome to the Airship Operating System!".
+    PRINT "The time is " + formatUNI.
+    PRINT "Mission clock: " + formatMET.
+    Print "CPU time is: " + (startTime - time:seconds).
+    PRINT "Initializing systems." + extradots.
+    }
+set extradots to "".
+set counter to 0.
+until counter > 8 {
+    set extradots to extradots + ".".
+    boot(extradots, startTime).
+    wait.2.
+    set counter to counter + 1.
+}
+
 PRINT "Done!".
-WAIT .2.
+WAIT.1.
+clearScreen.
+
+
 // Function to print a section divider
 function printDivider {
     parameter title.
@@ -35,109 +99,117 @@ function printDivider {
     print "= " + title.
     print "==========================================".
 }
+SET terminal:height TO 70.
+SET terminal:width TO 200.
 
-// Function to print a formatted message with a timestamp
-function printTimestamped {
-    parameter msg.
-    set elapsedTime to time:seconds - startTime.
-    print "[" + formatTime(elapsedTime) + "] " + msg.
-}
 
-// Function to print the blimp ASCII art
 function printBlimp {
-    print "       _..--=--..._ ".
-    print "    .-'            '-.  .-. ".
-    print "   /.'   BLIMPS!    '.\\/  / ".
-    print "  |=-                -=| ( ".
-    print "   \\'.              .'/\\  \\ ".
-    print "    '-.,_____ _____.-'  '-' ".
-    print "         [_____]=8) ".
+PRINT"░░████████████████████████                                                                                                                      ".
+PRINT"▒▒      ░░░░░░░░        ░░██░░                                                                                                                  ".
+PRINT"▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▒▒░░░░▒▒▒▒                                                                                                                ".
+PRINT"  ▓▓▓▓▓▓▓▓▓▓▒▒▒▒▓▓██▓▓▓▓▓▓░░░░░░▓▓▓▓░░░░▒▒▒▒▒▒    ▒▒▒▒▒▒░░░░░░░░░░  ░░░░░░▒▒░░░░░░▒▒▒▒████░░                                                    ".
+PRINT"    ██▓▓▓▓██████████████▓▓░░▓▓▒▒▓▓▒▒      ▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░  ▓▓▓▓                                            ".
+PRINT"    ░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░▓▓▒▒▒▒    ░░▒▒░░░░░░░░░░▒▒░░░░░░░░░░░░██░░░░░░░░░░▒▒▒▒░░░░░░░░▒▒░░░░░░░░░░▒▒▓▓▒▒░░                                    ".
+PRINT"        ▓▓▓▓████▓▓▓▓░░░░▒▒▒▒    ░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░  ░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░▒▒                                ".
+PRINT"        ▒▒░░░░░░░░░░░░▓▓▒▒    ▓▓░░░░░░▒▒░░░░░░░░░░░░▒▒▓▓░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░▒▒░░                            ".
+PRINT"                  ▒▒▒▒▒▒    ▒▒▒▒░░░░░░░░▒▒░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▓▓░░░░░░░░░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▒▒▒                        ".
+PRINT"                  ░░▒▒▓▓  ▒▒░░▓▓▒▒░░░░░░▓▓████████████▓▓▓▓░░░░▒▒▓▓░░░░░░░░░░░░░░▓▓▒▒░░░░░░░░░░░░░░░░░░░░▓▓▒▒░░░░▒▒░░░░░░▒▒                      ".
+PRINT"                      ░░  ░░░░░░▒▒░░░░░░██████████████████████░░░░░░▓▓░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░▓▓▒▒░░░░░░░░░░░░░░▓▓                    ".
+PRINT"                    ▒▒  ▒▒░░░░░░▒▒▒▒░░░░░░▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████▓▓▓▓░░░░▒▒░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░██░░░░░░░░░░░░░░░░▒▒                  ".
+PRINT"                    ▒▒░░░░░░░░░░▒▒▒▒░░░░░░▓▓▒▒▒▒▒▒▒▒▒▒▒▒▓▓▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░                ".
+PRINT"                    ▒▒██░░░░░░░░░░████▓▓▓▓██▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░████▓▓████▓▓░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░▓▓                ".
+PRINT"                    ░░▒▒░░░░░░░░░░▓▓██████▒▒▓▓▓▓▓▓██▓▓██▒▒▒▒▓▓██▓▓▒▒▓▓▒▒▓▓▓▓▓▓██▒▒▓▓▓▓░░░░░░░░░░░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░░▒▒▒▒▒▒              ".
+PRINT"                  ██▒▒▓▓░░░░░░░░░░▓▓██░░░░░░░░░░▒▒░░▒▒▒▒██▓▓▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░▒▒▒▒▓▓              ".
+PRINT"                    ░░▒▒░░░░░░░░░░░░░░░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░▒▒▒▒▒▒░░              ".
+PRINT"                    ▓▓██▓▓██████▒▒▓▓██▒▒▓▓▓▓▓▓▒▒▓▓██▒▒▓▓██▓▓▒▒▓▓▓▓████▒▒████████▒▒▓▓██▒▒▒▒▒▒▓▓████░░████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▒▒██              ".
+PRINT"                ░░  ▓▓▓▓░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░▓▓██░░░░░░░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░▒▒▒▒██              ".
+PRINT"                ██▓▓▓▓▓▓░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░██▒▒░░░░░░░░░░░░░░░░░░░░░░████░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░▓▓██              ".
+PRINT"                ▒▒▓▓▓▓▓▓░░░░░░░░▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░▒▒██░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░▓▓                ".
+PRINT"                ▒▒▒▒▓▓░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░▒▒▓▓                ".
+PRINT"                        ▓▓░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░▒▒                  ".
+PRINT"                        ▒▒▒▒░░░░▒▒░░░░░░░░░░░░░░░░░░░░▓▓▓▓░░░░░░░░░░░░░░░░░░░░░░▓▓▒▒░░░░░░░░░░░░░░░░░░░░▓▓▒▒░░░░░░░░░░░░░░░░██                  ".
+PRINT"                        ▒▒▒▒░░▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░░░██▒▒░░░░░░░░░░░░░░░░░░░░▓▓▒▒░░▒▒██▒▒░░▒▒░░▓▓                    ".
+PRINT"                      ▒▒▒▒▒▒▓▓▒▒░░░░░░░░▒▒░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░▒▒▒▒▒▒░░  ░░                      ".
+PRINT"                    ░░░░░░▒▒▒▒▒▒▒▒░░░░▒▒██░░░░░░░░░░▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░▒▒▓▓░░░░░░░░░░░░░░░░░░░░▒▒▒▒░░░░██▒▒      ▓▓                      ".
+PRINT"                  ░░░░░░░░▒▒▒▒▒▒▓▓▓▓▒▒▓▓░░▒▒░░░░░░▒▒▒▒░░░░░░░░░░░░░░░░░░░░░░░░▒▒░░░░░░░░▓▓▓▓▒▒░░░░░░▓▓▓▓░░▒▒██        ▓▓                        ".
+PRINT"              ▒▒▒▒░░▒▒▓▓▓▓░░▓▓░░▒▒▓▓▓▓▓▓▒▒░░▒▒░░▒▒▒▒░░░░░░░░░░████░░░░░░░░░░▓▓░░░░░░░░▒▒▓▓▓▓░░░░░░░░▓▓██▒▒  ▒▒      ▓▓                          ".
+PRINT"        ░░▓▓░░░░░░░░░░░░░░░░▓▓░░▓▓██░░      ░░██▓▓░░░░░░░░▒▒▒▒░░▓▓░░░░░░░░▓▓▒▒░░░░░░▓▓▒▒░░▓▓▓▓▓▓░░░░  ░░▓▓░░          ██                        ".
+PRINT"              ▓▓██▓▓▓▓██▓▓██  ▓▓  ▒▒          ░░░░    ▓▓██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓████▓▓██░░        ▒▒            ████░░██░░░░██                        ".
+PRINT"                                ░░              ▓▓  ▒▒            ░░      ▓▓  ▒▒            ░░      ██          ████▓▓██                        ".
+PRINT"                              ██▒▒                ██              ▓▓    ▓▓  ▒▒                          ▒▒      ▒▒▓▓                            ".
+PRINT"                              ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓                ▒▒  ▒▒                  ▒▒            ░░▒▒▒▒██                            ".
+PRINT"                              ▓▓▓▓▓▓▓▓▓▓▓▓████▓▓▓▓██▓▓▓▓            ████                        ▒▒  ▒▒░░  ▒▒  ░░░░░░░░                          ".
+PRINT"                              ▓▓▓▓▓▓▓▓████▓▓██▓▓▓▓▓▓████████████████████                        ▒▒  ▒▒  ░░    ░░▒▒▒▒▒▒░░░░░░░░░░░░░░░░░░░░      ".
+PRINT"                            ░░██▓▓▓▓▓▓██▓▓▓▓▓▓██▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓                        ▒▒██░░          ▒▒░░░░▒▒▒▒▒▒░░░░▒▒░░░░░░░░    ".
+PRINT"                          ░░░░▓▓▒▒░░▓▓████████████████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  ░░  ▒▒░░▓▓▓▓▓▓░░▓▓  ██▒▒            ░░░░▓▓▒▒▒▒▒▒▒▒▒▒▒▒░░░░▒▒░░░░  ".
+PRINT"                          ░░▓▓▓▓▓▓▓▓████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓            ░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒  ".
+PRINT"                          ░░▓▓▓▓██████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▓▓▓▓██▓▓▓▓██▓▓                ░░░░▒▒░░░░▒▒░░░░▒▒░░░░▒▒░░░░  ".
+PRINT"                        ▓▓▒▒▒▒██░░░░░░░░░░▒▒▒▒▒▒██████████████████████████████████████████▒▒                        ▒▒░░▒▒░░░░░░░░▒▒░░░░░░▒▒    ".
+PRINT"                          ▓▓▒▒██░░░░░░░░▒▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓░░                        ░░▒▒▒▒▒▒  ▒▒▒▒▒▒▒▒▒▒▒▒░░░░░░    ".
+PRINT"                          ░░▒▒▓▓░░░░░░▒▒▒▒████▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓██▓▓▓▓░░                              ░░▓▓▓▓▓▓    ░░    ░░░░      ".
+PRINT"                          ░░░░▓▓▓▓░░▒▒      ░░████████████████████████████▒▒▒▒░░▒▒▒▒▒▒                              ▒▒▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓        ".
+PRINT"                            ▒▒▒▒██▒▒▒▒        ░░▓▓▓▓▓▓▓▓██▓▓████████▓▓▓▓░░▒▒░░░░░░░░▒▒░░                            ▒▒░░▒▒▓▓▓▓▓▓▓▓▓▓            ".
+PRINT"                                                ▓▓████████████████████▓▓    ▒▒▓▓░░░░░░░░▒▒▒▒▒▒                            ░░▒▒▒▒  ░░░░          ".
+
+
+
 }
 
-// Function to print the welcome screen
 function printWelcome {
     clearScreen.
-    print "==========================================".
-    print "=              WELCOME TO                =".
-    print "=         THE AIRSHIP CONTROL SYSTEM      =".
-    print "==========================================".
     printBlimp().
-    print "==========================================".
-    print "=              SYSTEM INFO               =".
-    print "==========================================".
+    print "======================================================================".
+    print "===============           WELCOME TO AOS               ===============".
+    print "===============       AIRSHIP OPERATING SYSTEM         ===============".
+    print "======================================================================".
+    
 }
 
-// Function to print ship status
+printWelcome().
+
+
+// printDivider("LOADING FUNCTIONS").
+// RUNPATH("functions.ks").
+// printTimestamped("Loaded functions from functions.ks").
+wait 2.
+
+
 function printShipStatus {
     print "==========================================".
     print "=             SHIP STATUS                =".
     print "==========================================".
-    print "Crew: " + ship:crewcount.
-    print "Fuel: " + round(ship:resources:amount("LiquidFuel")) + " / " + round(ship:resources:max("LiquidFuel")).
-    print "Oxidizer: " + round(ship:resources:amount("Oxidizer")) + " / " + round(ship:resources:max("Oxidizer")).
-    print "Food: " + round(ship:resources:amount("Supplies")) + " / " + round(ship:resources:max("Supplies")).
+    print "Crew: " + SHIP:CREW:LENGTH + " / " + SHIP:crewcapacity.
+    print SHIP:CREW().
+    print SHIP.CONNECTION.
+    print "Dry Mass: " + ROUND(SHIP:drymass).
+    print "Wet Mass: " + ROUND(SHIP:wetmass).
+    print "Actual Mass: " + ROUND(SHIP:mass).
+    // print "Resources: " + SHIP:resources.
     print "==========================================".
 }
-
-// Start the timer
-set startTime to time:seconds.
-
-// Print booting message
-printWelcome().
-wait 2.
-
-// Print initializing message
-printDivider("INITIALIZING VARIABLES").
-printTimestamped("Starting initialization...").
-wait 1.
-
-// Initialize variables
-printTimestamped("Setting desired heading to 90").
-set desiredHeading to 90.  // East, change this value as needed
-
-printTimestamped("Setting desired pitch to 10").
-set desiredPitch to 10.    // Change this value as needed
-
-printTimestamped("Setting desired roll to 0").
-set desiredRoll to 0.      // Level, change this value as needed
-
-printTimestamped("Setting pitch threshold to 2").
-set pitchThreshold to 2.
-
-printTimestamped("Setting KP to 0.1").
-set kp to 0.1.
-
-printTimestamped("Setting KD to 0.05").
-set kd to 0.05.
-
-printTimestamped("Initializing PD control variables").
-set latErrorPrev to 0.
-set timePrev to time:seconds.
-set runwayLongitude to ship:geoposition:longitude. // Set this to the longitude of the center of the runway
-wait 1.
-
-// Load functions from another file
-printDivider("LOADING FUNCTIONS").
-// RUNPATH("functions.ks").
-printTimestamped("Loaded functions from functions.ks").
-wait 1.
-
-// Print ship status
 printShipStatus().
-wait 3.
-
+wait .5.
+PRINT "===============================".
+PRINT "         BOOT COMPLETE         ".
+PRINT "===============================".
+PRINT "Welcome to the Blimp Control System!".
+PRINT "The time is " + formatUNI.
+PRINT "Mission clock: " + formatMET.
+Print "CPU time is T+" + (-1*(startTime - time:seconds)) + " seconds".
+PRINT "===============================".
+wait .1.
+PRINT "Switching to Archive 0...".
+wait .1.
+switch TO 0.
+LIST FILES.
 // Start the main script
-printDivider("RUNNING MAIN SCRIPT").
-printTimestamped("Running main script...").
-// RUNPATH("main.ks").
+// printDivider("RUNNING MAIN SCRIPT").
+// printTimestamped("Running main script...").
+// // RUNPATH("main.ks").
 
-printTimestamped("Boot script completed.").
-printDivider("END OF BOOT SCRIPT").
+// printDivider("END OF BOOT SCRIPT").
+// printTimestamped("Boot script completed.").
+// Print "Boot Took:" + (startTime - time:seconds) + "Seconds".
 
-// Define desired heading, pitch, and roll
-set desiredHeading to 90.  // East, change this value as needed
-set desiredPitch to 10.    // Change this value as needed
-set desiredRoll to 0.      // Level, change this value as needed
-
-// set elapsedTime to time:seconds - startTime.
-// print "[" + formatTime(elapsedTime) + "] Boot completed.".
+SET terminal:height TO 49.
+SET terminal:width TO 19.

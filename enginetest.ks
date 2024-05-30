@@ -1,28 +1,22 @@
-// Define the minimum thrust threshold
-set minThrust to 10.0.  // Adjust this value as needed
-
-// Function to get all active engines
-function getActiveEngines {
-    set engines to list().
-    for part in SHIP:PARTS {
-        if part:HASMODULE("ModuleEngines") {
-            local engine is part:GETMODULE("ModuleEngines").
-            print "mod found:" + part.
-            if engine:IGNITION = true{
-                engines:add(engine).
+// Function to monitor and shut down engines
+set minThrust to 10.0.
+function monitorEngines {
+    list engines in engList.  // Get a list of all engines
+    for eng in engList {
+        if eng:PART:NAME = "WBILargeElectricPart"{
+            print "Engine: " + eng:NAME + " Thrust: " + eng:THRUST.
+            if eng:THRUST < minThrust {
+                print "Engine thrust too low, shutting down: " + eng:NAME.
+                eng:SHUTDOWN().
             }
         }
-    }
-    return engines.
-}
-
-// Function to monitor and shut down engines
-function monitorEngines {
-    local activeEngines is getActiveEngines().
-    for engine in activeEngines {
-        if engine:THRUST < minThrust {
-            print "Engine thrust too low, shutting down: " + engine:PART:NAME.
-            engine:SHUTDOWN().
+        if eng:PART:NAME = "turboFanEngine" {
+            print "Engine: " + eng:NAME + " Thrust: " + eng:THRUST.
+            if eng:THRUST < minThrust {
+                print "Engine thrust too low, shutting down: " + eng:NAME.
+                eng:SHUTDOWN().
+                INTAKES OFF.
+            }
         }
     }
 }
@@ -30,6 +24,12 @@ function monitorEngines {
 // Main loop
 until false {
     monitorEngines().
-    print engines.
-    WAIT 0.5.  // Adjust the wait time as needed
+    wait 1.
 }
+LIST ENGINES IN engList. // Get a list of all engines
+FOR eng IN engList {
+    IF eng:name = "WBILargeElectricPart" {
+        eng:setfield("IntakeStatus", "Closed").
+    }
+}
+

@@ -46,6 +46,12 @@ function printTimestamped {
     print "[" + formatMET + "] " + msg.
 }
 wait until ship:unpacked.
+
+// Wait for user to hit RCS (and turn on debug fuel)
+wait until rcs.
+rcs off.
+core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
+
 set startTime to time:seconds.
 PRINT"===============================".
 PRINT"".

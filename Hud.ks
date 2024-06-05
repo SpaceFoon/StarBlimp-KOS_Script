@@ -29,3 +29,4 @@ function fitness_fn {
     set last_time to time:seconds.
     wait 0.001.
   }
+}

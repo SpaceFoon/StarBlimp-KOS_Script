@@ -45,12 +45,14 @@ function printTimestamped {
     parameter msg.
     print "[" + formatMET + "] " + msg.
 }
+//Ship Loaded fully.
 wait until ship:unpacked.
+//Open in game terminal.
+CORE:PART:GETMODULE("kOSProcessor"):DOEVENT("Open Terminal").
 
-// Wait for user to hit RCS (and turn on debug fuel)
-wait until rcs.
-rcs off.
-core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
+// wait until rcs.
+// rcs off.
+// core:part:getmodule("kOSProcessor"):doevent("Open Terminal").
 
 set startTime to time:seconds.
 PRINT"===============================".
@@ -59,9 +61,9 @@ PRINT"" + SHIP:NAME + " booting up...".
 PRINT"".
 PRINT"===============================".
 PRINT"".
-PRINT "Press any key to continue...".
-WAIT .2.
-WAIT UNTIL terminal:input:haschar.
+// PRINT "Press any key to continue...".
+// WAIT .2.
+// WAIT UNTIL terminal:input:haschar.
 
 CLEARSCREEN.
 function boot {
@@ -87,6 +89,7 @@ function boot {
 set extradots to "".
 set counter to 0.
 until counter > 8 {
+    hudtext("loading" + counter * 10.2 + "%", 2, 2, 50, yellow, false).
     set extradots to extradots + ".".
     boot(extradots, startTime).
     wait.2.
@@ -217,5 +220,5 @@ LIST FILES.
 // printTimestamped("Boot script completed.").
 // Print "Boot Took:" + (startTime - time:seconds) + "Seconds".
 
-SET terminal:height TO 49.
-SET terminal:width TO 19.
+SET terminal:height TO 22.
+SET terminal:width TO 49.

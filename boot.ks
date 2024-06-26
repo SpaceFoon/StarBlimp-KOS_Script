@@ -61,9 +61,9 @@ PRINT"" + SHIP:NAME + " booting up...".
 PRINT"".
 PRINT"===============================".
 PRINT"".
-// PRINT "Press any key to continue...".
-// WAIT .2.
-// WAIT UNTIL terminal:input:haschar.
+PRINT "Press any key to continue...".
+WAIT .2.
+WAIT UNTIL terminal:input:haschar.
 
 CLEARSCREEN.
 function boot {
@@ -89,7 +89,7 @@ function boot {
 set extradots to "".
 set counter to 0.
 until counter > 8 {
-    hudtext("loading" + counter * 10.2 + "%", 2, 2, 50, yellow, false).
+    hudtext("loading" + counter * 1.2 + "%", 30, 2, 50, yellow, false).
     set extradots to extradots + ".".
     boot(extradots, startTime).
     wait.2.

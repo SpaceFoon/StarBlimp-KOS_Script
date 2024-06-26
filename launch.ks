@@ -75,7 +75,7 @@ FUNCTION SETPID {
         SET steeringmanager:yawpid:Ki TO Ki.
         SET steeringmanager:yawpid:Kd TO Kd.
     }
-    PrintTimeStamped(axis + " PID SETtings updated:").
+    PrintTimeStamped(axis + " PID settings updated:").
     PRINT "  Kp: " + Kp.
     PRINT "  Ki: " + Ki.
     PRINT "  Kd: " + Kd.
@@ -105,12 +105,12 @@ FUNCTION ControlSurfacesOff{
 }
 
 //Function TO shut down engines and intakes properly when they are out of juice.
-FUNCTION moniTOrEngines {
+FUNCTION monitorEngines {
 
     list engines in engList.  //list of all engines
     FOR  eng in engList {
         if eng:NAME = "WBILargeElectricPart"{
-            if eng:ignition = true {
+            if eng:ignition = true and PROPSDONE = FALSE{
                 PRINT "Engine: " + eng:NAME + " Thrust: " + ROUND(eng:THRUST) + " kN".
                 if eng:THRUST < 7 {
                     PRINT "Engine thrust TOo low, shutting down: " + eng:NAME.
@@ -154,15 +154,16 @@ FUNCTION PRINTWelcome {
     PRINT "====================              WELCOME TO THE            ================".
     PRINT "====================       AIRSHIP LAUNCH CONTROL SYSTEM    ================".
     PRINT "============================================================================".
+    PRINT " ".
     PRINT"                                 _..--=--..._        ".
     PRINT"                              .-'            '-.  .-.".
-    PRINT"                             /.'   BLIMPS!    '.\/  /".
-    PRINT"                            |=-                -=| ( ".
-    PRINT"                             \'.              .'/\  \".
+    PRINT"                             /.'    Blimps    '.\/  /".
+    PRINT"                            |=-       in       -=| ( ".
+    PRINT"                             \'.   Spaaaaace! .'/\  \".
     PRINT"                              '-.,_____ _____.-'  '-'".
     PRINT"                                   [_____]=8         ".
-    PRINT "".
-        WAIT 1.
+    PRINT " ".
+    WAIT 1.
     PRINT "============================================================================".
     PRINT "====================    PROGRAM 1: SINGLE STAGE TO EVE      ================".
     PRINT "============================================================================".
@@ -182,8 +183,10 @@ FUNCTION PRINTWelcome {
     PRINT "           .                   ~--___ ; ___--~                             .".
     PRINT "                          .          ---         .                       -JT".
     PRINT "============================================================================".
-    PRINT "====== Please sit back and relax while the computer takes you TO Eve. ======".
-    PRINT "===========  Call 1-800-PHONE-HOME for techinical support ==================".
+    PRINT "====== Please sit back and relax while the computer takes you to Eve. ======".
+    PRINT "===========  Call 1-800-PHONE-HOME for technical support ===================".
+    PRINT "============================================================================".
+    PRINT " ".
     TERMINAL:REVERSE.
     WAIT .2.
     TERMINAL:REVERSE.
@@ -239,8 +242,8 @@ FUNCTION lstage2 {
                     WAIT 1.5.
         //TOGGLE ag50. Fireworks are broken. They doin't go anywhere and break themselvs
         WAIT.2.
-        SET TERMINAL:HEIGHT TO 20.
-        SET TERMINAL:WIDTH TO 49.
+        SET TERMINAL:HEIGHT TO 14..
+        SET TERMINAL:WIDTH TO 44.
         SET FLAPSLVL TO 1.
         RETURN FLAPSLVL.
     }
@@ -361,7 +364,12 @@ FUNCTION calculateBurnTime {
 FUNCTION executeManeuver {
     PrintTimeStamped("Burn time is: " + burnTime).
     wait.2.
-    LOCK STEERING TO mynode:burnvector.
+    if mynode:typename = "node"{
+        LOCK STEERING TO mynode:burnvector.
+    }else{
+        print "ERROR: LOCK STEERING TO mynode:burnvector.".
+    }
+    
     PrintTimeStamped("Steering Locked TO maneuver node.").
 
     // WAIT until the maneuver node's time minus half the burn time
@@ -371,12 +379,14 @@ FUNCTION executeManeuver {
     PrintTimeStamped("Executing burn...").
 
     // WAIT for the burn duration
-    WAIT burnTime - 1.
+    WAIT burnTime.
     // I have no idea why I need a -1 but I do. A real magic number.
 
     LOCK throttle TO 0.
+    unlock throttle.
+    unlock steering.
     PrintTimeStamped("Burn complete.").
-    wait .2.
+    wait 2.
     // Remove this maneuver node
     remove nextnode.
 }
@@ -391,7 +401,7 @@ FUNCTION SETKACAlarmForNextNode{
     PARAMETER alarmTitle.
     PARAMETER alarmNotes.
     addAlarm("Manuver", NEXTNODE:TIME + kacleadtime + eta:nextnode < (burnTime / 2) - 60, alarmTitle, alarmNotes).
-    ADDONS:KAC:ALARMS:action.
+    // ADDONS:KAC:ALARMS:  KacAction
     }
 
 
@@ -399,24 +409,12 @@ FUNCTION SETKACAlarmForNextNode{
 //for long term travel radiation management. Needs TO point away from the sun for protectino.
 
 FUNCTION antisun {
-    // Calculate vecTOr away from the sun
-    SET sunVecTOr TO SHIP:POSITION - BODY("Sun"):position.
-    SET awayFromSun TO -sunVecTOr:NORMALIZED.
+    // Calculate vector towards the Sun
+    local sunVector is body("Sun"):position - ship:position.
+    local awayFromSun is -sunVector:normalized.
 
-    LOCK STEERING TO VCRS(awayFromSun, UP:STARVECTOR, SHIP:FACING:FOREVECTOR).
-
-    // Optional: Add a delay or loop TO maintain the orientation
-
-    // WAIT or loop TO keep the ship pointed away from the sun
-    WAIT UNTIL FALSE. // Infinite loop TO hold orientation (press Ctrl+C in kOS console TO exit)
-
-    // Alternatively, you could use a loop with a check TO maintain the orientation:
-    // UNTIL <condition> {
-    //     SET sunVecTOr TO SHIP:POSITION - BODY("Sun"):POSITION.
-    //     SET awayFromSun TO -sunVecTOr:NORMALIZED.
-    //     LOCK STEERING TO VCRS(awayFromSun, UP:STARVECTOR, SHIP:FACING:FOREVECTOR).
-    //     WAIT 0.1. // Small delay TO prevent script from running TOo frequently
-    // }
+    // Lock steering away from Sun
+    return awayFromSun.
 
 }
 //https://www.reddit.com/r/Kos/comments/4kk0gd/coming_out_of_time_warp/
@@ -442,6 +440,77 @@ FUNCTION AreoBrakeAssist{
     SET safetyMargin TO 0.1. // 10% safety margin
     SET adjustedDescentTime TO descentTime * (1 + safetyMargin).
 
+}
+set logging to true.
+if(Logging) {
+LOG "TIME" + "," +
+ "SHIP:ALTITUDE" + "," +
+ "TargetAltitude" + "," +
+ "AltitudePitch" + "," +
+ "GROUNDSPEED" + "," +
+ "VERTICALSPEED" + "," +
+ "AIRSPEED" + "," +
+ "SpeedPitch" + "," +
+ "SHIP:Q" + "," +
+ "SHIP:SENSORS:PRES" + "," +
+ "AirResistPitch" + "," +
+ "SHIP:APOAPSIS" + "," +
+ "AVAILABLETHRUST" + "," +
+ "SHIP:MASS" + "," +
+ "SHIP:WETMASS" + "," +
+ "SHIP:DRYMASS" + "," +
+ "PitchingSteer"
+  to "0:/LaunchProfile.csv". 
+
+  }.
+  SET TargetAltitude TO 85000.
+SET GravCst TO KERBIN:MU / KERBIN:RADIUS^2. 
+SET TargetOrbitalSpeed TO 600000 * SQRT(GravCst/(600000+TargetAltitude)).
+SET Staggincount TO 3.
+Set PitchingSteer to 90.
+SET AirResistPitch TO 90.
+SET AdjustedThrottle TO 1.
+SET SpeedPitch TO 90.
+SET AltitudePitch TO 90.
+SET GravityLoss TO 1.
+SET DragCoef TO 1.
+SET CrossSection TO 1.25.
+SET Area TO constant:pi * (CrossSection/2)*(CrossSection/2).
+SET DragCST TO DragCoef * Area.
+SET RemainingSecs TO 400.
+SET oneSecondsLater to TIME:SECONDS + 1.
+LOCK RemainingSecs TO ((70000-SHIP:ALTITUDE)/MAX(0.0000001,SIN(PitchingSteer)))  /  MAX(0.0000001,SHIP:AIRSPEED).
+LOCK AirEstimatedLoss TO (SHIP:Q * DragCST)/2 * RemainingSecs.
+LOCK AirResistPitch TO MIN((AirEstimatedLoss*10),90).
+LOCK SpeedPitch TO (100-(GROUNDSPEED/12)).
+LOCK AltitudePitch TO (90 - ((SHIP:Altitude /60000 )*90)).
+LOCK GravityLoss TO SIN(PitchingSteer)*AVAILABLETHRUST - SHIP:MASS * GravCst.
+LOCK GravityEstimatedLoss TO GravityLoss*SHIP:MASS*(TargetOrbitalSpeed-GROUNDSPEED)/(AVAILABLETHRUST*MAX(0.0001,COS(PitchingSteer))).
+LOCK LNPitch TO 90 - (90 *  LN(SHIP:ALTITUDE/TargetAltitude +1)).
+//Loggin loop
+WHEN TIME:SECONDS > oneSecondsLater THEN {
+if(Logging) {
+SET oneSecondsLater to TIME:SECONDS + 1.
+LOG TIME:SECONDS + "," +
+ SHIP:ALTITUDE + "," +
+//  TargetAltitude + "," +
+//  AltitudePitch + "," +
+ GROUNDSPEED + "," +
+ VERTICALSPEED + "," +
+ AIRSPEED + "," +
+ SpeedPitch + "," +
+ SHIP:Q + "," +
+//  SHIP:SENSORS:PRES + "," +
+ AirResistPitch + "," +
+ SHIP:APOAPSIS + "," +
+ AVAILABLETHRUST + "," +
+ SHIP:MASS + "," +
+ SHIP:WETMASS + "," +
+ SHIP:DRYMASS + "," +
+ PitchingSteer
+  to "0:/Launch.csv". 
+  }.
+RETURN TRUE.
 }
 
 //---------------------------------------------------------//
@@ -470,7 +539,7 @@ TOGGLE AG1.
 PRINTWelcome().
 
 PRINTDivider("WARNING: DON'T TOUCH SAS, RCS, OR STAGING.").
-
+PRINT " ".
 PRINT "Press any key to confirm you will die if you do that...".
 UNTIL TERMINAL:input:haschar {
     TERMINAL:REVERSE.
@@ -668,7 +737,7 @@ WAIT UNTIL alt:radar > 5.
 SETPID("pitch", 1, 0.1, 3).
 LOCK STEERING TO HEADING(90.2, 3.25, 0).
 PrintTimeStamped("RADAR > 5").
-PRINTDivider("Launch stage: 5, LIFT OFF, WE HAVE LIFTOFF!!!").
+PRINTDivider("Launch stage: 5, LIFTOFF, WE HAVE LIFTOFF!!!").
 UNLOCK WHEELSTEERING.
 PrintTimeStamped("UNLOCK WHEELSTEERING.").
 
@@ -680,13 +749,13 @@ PrintTimeStamped("UNLOCK WHEELSTEERING.").
 WAIT UNTIL alt:radar > 15.
 PrintTimeStamped("radar > 15. WAIT 3").
 //Pull up very hard
-SETPID("pitch", 5, 0.1, 6).
-LOCK STEERING TO HEADING(90.2, 12, 0).
+SETPID("pitch", 5, 0.1, 5).
+LOCK STEERING TO HEADING(90.2, 10, 0).
 // PrintTimeStamped("LOCK TO HEADING(90.2, 14, 0).").
-WAIT .5.
+WAIT .8.
 PrintTimeStamped("Gear Up").
 GEAR OFF.
-WAIT 2.5.
+WAIT 3.5.
 // so we can sTOp pulling up...
 lvlBaloon().
 
@@ -705,12 +774,21 @@ TOGGLE AG6.
 WAIT.1.
 TOGGLE AG6.
 WAIT UNTIL SHIP:AIRSPEED > 160.
+// toggle ag3.//
 TOGGLE AG6.
 PrintTimeStamped("Flaps up.").
+list engines in engList.
+    //Saves gas?
+    FOR  eng in engList {
+        if eng:NAME = "turboFanEngine" {
+        set eng:thrustlimit to 10.
+        }
+    }
 WAIT UNTIL SHIP:AIRSPEED > 170.
 PrintTimeStamped("Flaps up.").
 TOGGLE AG6.
 WAIT UNTIL SHIP:AIRSPEED > 180.
+
 TOGGLE AG6.
 PrintTimeStamped("Flaps up.").
 WAIT UNTIL SHIP:AIRSPEED > 190.
@@ -719,10 +797,11 @@ PrintTimeStamped("Flaps up damnt!").
 
 //225 m/s is enough TO start climbing.
 //this will keep you climbing without going TO fast TO save on fuel.
-WAIT UNTIL SHIP:AIRSPEED > 225.
-PrintTimeStamped("AIRSPEED > 225 HEADING(90, 18, 0)").
-LOCK STEERING TO HEADING(90, 18, 0).
+WAIT UNTIL SHIP:AIRSPEED > 200.
+PrintTimeStamped("AIRSPEED > 200 HEADING(90, 10, 0)").
+LOCK STEERING TO HEADING(90, 10, 0).
 WAIT UNTIL alt:radar > 500.
+SET STEERINGMANAGER:MAXSTOPPINGTIME TO 1.5.
 PrintTimeStamped("radar > 500").
 SET CLIMB TO 0.
 UNTIL CLIMB > 0{
@@ -733,33 +812,43 @@ UNTIL CLIMB > 0{
     PRINT "Airspeed: " + ROUND(AIRSPEED, 2) + " m/s".
     PRINT "Vertical Speed: " + ROUND(SHIP:verticalspeed, 2) + " m/s".
     list engines in engList.
+    //Saves gas?
     FOR  eng in engList {
-        SET TOTALTHRUST TO TOTALTHRUST + ENG:THRUST.
+        if eng:NAME = "turboFanEngine" {
+        set eng:thrustlimit to ship:altitude / 45.
+        }
     }
     PRINT "TOtal Thrust: " + ROUND(TOTALTHRUST) + " kN".
+    IF SHIP:AIRSPEED > 275{
+        LOCK STEERING TO HEADING(90, 18, 0).
+    }
+    IF SHIP:AIRSPEED > 250{
+       PrintTimeStamped("LOCK TO HEADING(90, 13, 0).").
+       // LOCK STEERING TO HEADING(90, 25, 0).
+       LOCK STEERING TO HEADING(90, 16, 0).
+    }
+    IF SHIP:AIRSPEED > 240 AND SHIP:AIRSPEED < 250{
+       PrintTimeStamped("LOCK TO HEADING(90, 11, 0).").
+       LOCK STEERING TO HEADING(90, 15, 0).
+       // LOCK STEERING TO HEADING(90, 11, 0).
+    }
+     IF SHIP:AIRSPEED < 240 AND SHIP:AIRSPEED > 230 {
+       PrintTimeStamped("LOCK TO HEADING(90, 9, 0).").
+       LOCK STEERING TO HEADING(90, 14, 0).
+       // LOCK STEERING TO HEADING(90, 9, 0).
+    }
+     IF SHIP:AIRSPEED < 230 AND SHIP:AIRSPEED > 220{
+       PrintTimeStamped("LOCK TO HEADING(90, 7, 0).").
+       LOCK STEERING TO HEADING(90, 11, 0).
+       // LOCK STEERING TO HEADING(90, 7, 0).
+    }
+    IF SHIP:AIRSPEED < 220{
+       PrintTimeStamped("LOCK TO HEADING(90, 6, 0).").
+       LOCK STEERING TO HEADING(90, 9, 0).
+       // LOCK STEERING TO HEADING(90, 6, 0).
+    }
 
- IF SHIP:AIRSPEED > 250{
-    PrintTimeStamped("LOCK TO HEADING(90, 25, 0).").
-    LOCK STEERING TO HEADING(90, 25, 0).
- }
- IF SHIP:AIRSPEED > 240 AND SHIP:AIRSPEED < 250{
-    PrintTimeStamped("LOCK TO HEADING(90, 22, 0).").
-    LOCK STEERING TO HEADING(90, 22, 0).
- }
-  IF SHIP:AIRSPEED < 240 AND SHIP:AIRSPEED > 230 {
-    PrintTimeStamped("LOCK TO HEADING(90, 20, 0).").
-    LOCK STEERING TO HEADING(90, 20, 0).
- }
-  IF SHIP:AIRSPEED < 230 AND SHIP:AIRSPEED > 220{
-    PrintTimeStamped("LOCK TO HEADING(90, 18, 0).").
-    LOCK STEERING TO HEADING(90, 18, 0).
- }
- IF SHIP:AIRSPEED < 220{
-    PrintTimeStamped("LOCK TO HEADING(90, 15, 0).").
-    LOCK STEERING TO HEADING(90, 15, 0).
- }
- //Save RCS
- IF ship:altitude > 5500 {
+ IF ship:altitude > 5150 {
     //save rcs
     rcs off.
     PrintTimeStamped("RCS OFF").
@@ -767,18 +856,19 @@ UNTIL CLIMB > 0{
  }
 }
 
-// We have alt, now we need speed. A lot of speed. This will take awhile...
+// We have some alt, now we need speed. A lot of speed. This will take a long time...
 CLEARSCREEN.
+// toggle ag3.
 PRINTDivider("Launch stage: 7, Gain Speed!").
 SETPID("pitch", 2, 0.1, 3).
 LOCK STEERING TO HEADING(90, 7.5, 0).
 PrintTimeStamped("HEADING(90, 7.5, 0).").
 
 // Turn fans off and close intakes when they become useless.
-WAIT UNTIL altitude > 6300.
+WAIT UNTIL altitude > 6000.
 SET PROPSDONE TO FALSE.
 UNTIL PROPSDONE = TRUE {
-    moniTOrEngines().
+    monitorEngines().
     WAIT .5.
     IF PROPSDONE = TRUE {
         TOGGLE AG2.
@@ -788,7 +878,8 @@ UNTIL PROPSDONE = TRUE {
 }
 //90747 liquid fuel needed for rockets.
 
-until SHIP:LIQUIDFUEL <= 91427{
+//https://github.com/lordcirth/kOS-Public/blob/master/maxq.ks
+until SHIP:LIQUIDFUEL <= 91427 {
     WAIT .5.
     CLEARSCREEN.
     PRINTDivider("Launch stage: 7, Gain Speed!").
@@ -801,9 +892,9 @@ until SHIP:LIQUIDFUEL <= 91427{
     }
     PRINT "Total Thrust: " + ROUND(TOTALTHRUST) + " kN".
     ship:altitude.
-    if SHIP:LIQUIDFUEL <= 92000{
-        PRINT "|=== GET READY TO BURN! In: " + ROUND((SHIP:LIQUIDFUEL - 91427)).
-        //TERMINAL:REVERSE.
+    if SHIP:LIQUIDFUEL <= 92500{
+        PRINT "|=== GET READY TO BURN! In: " + ROUND((SHIP:LIQUIDFUEL - 91245)).
+        TERMINAL:REVERSE.
     }
 }
 // TERMINAL:REVERSE.
@@ -814,14 +905,14 @@ rcs on.
 PrintTimeStamped("RCS ON").
 SETPID("pitch", 5, 0.1, 5.5).
 // PrintTimeStamped("PID: 5, 0.1, 6").
-LOCK STEERING TO HEADING(90, 38, 0).
-PrintTimeStamped("HEADING(90, 38, 0)").
+LOCK STEERING TO HEADING(90, 29, 0).
+PrintTimeStamped("HEADING(90, 29, 0)").
 // Start pitching up then fire rockets.
 // We start the burn at 91300 because the jets will still be working a bit longer.
-WAIT until SHIP:LIQUIDFUEL <= 91291.
+WAIT until SHIP:LIQUIDFUEL <= 91392.
 PRINTDivider("Launch stage: 8, Pitch and BURN!").
 stage.
-WAIT 5.
+WAIT 3.
 rcs off.
 
 //Start heading TO space!
@@ -843,16 +934,16 @@ UNTIL CLIMB2 > 0{
     }
     PRINT "Thrust: " + ROUND(TOTALTHRUST) + " kN".
     IF SHIP:OBT:ETA:APOAPSIS > 40{
-        LOCK STEERING TO HEADING(90, 35, 0).
+        LOCK STEERING TO HEADING(90, 25, 0).
     }
-    IF SHIP:OBT:ETA:APOAPSIS > 49{
-        LOCK STEERING TO HEADING(90, 30, 0).
+    IF SHIP:OBT:ETA:APOAPSIS > 47{
+        LOCK STEERING TO HEADING(90, 20, 0).
     }
     IF JETSDONE = FALSE {
     moniTOrEngines().
     WAIT .3.
     }
-    IF SHIP:OBT:ETA:APOAPSIS > 54{
+    IF SHIP:OBT:ETA:APOAPSIS > 51.5{
         LOCK STEERING TO PROGRADE.
     }
     IF SHIP:apoapsis >= 74950{
@@ -873,11 +964,11 @@ PrintTimeStamped("Aero Control Surfaces OFF.").
 WAIT.5.
 
 // mediumCS().
-PrintTimeStamped("SET STEERINGMANAGER:MAXSTOPPINGTIME TO 4.").
-SETPID("pitch", 3, 0.2, 4).
-SETPID("roll", 3, 0.2, 4).
+PrintTimeStamped("SET STEERINGMANAGER:MAXSTOPPINGTIME TO 3.").
+SETPID("pitch", 2, 0.2, 3).
+SETPID("roll", 2, 0.2, 3).
 SETPID("yaw", 2, 0.2, 3).
-SET STEERINGMANAGER:MAXSTOPPINGTIME TO 4.
+SET STEERINGMANAGER:MAXSTOPPINGTIME TO 3.
 WAIT .5.
 //Calculate when it is time TO burn, SET an alarm and do it.
 PrintTimeStamped("Creating circularization burn").
@@ -886,19 +977,20 @@ WAIT 1.
 PrintTimeStamped("Calculating burn time.").
 SET burnTime TO calculateBurnTime().
 WAIT 1.
-SETKACAlarmForNextNode("KillWarp",15, "Burn TO Orbit!", "This burn was brought to you by Snacky Smores. Ride the Walrus!").
-PrintTimeStamped("KAC alarm SET for 15 seconds out").
+// SETKACAlarmForNextNode("KillWarp",15, "Burn TO Orbit!", "This burn was brought to you by Snacky Smores. Ride the Walrus!").
+// PrintTimeStamped("KAC alarm SET for 15 seconds out").
 WAIT .5.
 executeManeuver().
-wait 1.
+wait 2.
 SET timeToOrbit to KUniverse:REALTIME - realMissionTime.
 print "It took "+ round(timeToOrbit) / 60 + "real life mins to orbit.".
 WAIT UNTIL SHIP:OBT:ETA:APOAPSIS < 10 OR SHIP:OBT:ETA:PERIAPSIS < 20.
 
 SET ROLL_ANGLE TO 180.
-SET STEERINGMANAGER:MAXSTOPPINGTIME TO 8.
+SET STEERINGMANAGER:MAXSTOPPINGTIME TO 4.
 WAIT.5.
-antisun().
+local awayFromSun is antisun().
+lock steering to lookdirup(-awayFromSun, ship:up:vector).
 WAIT 3.
 
 
@@ -912,16 +1004,16 @@ PrintTimeStamped("Opening Lower Hander Bay Door!").
 TOGGLE AG43.
 WAIT 3.
 //lights on
-PrintTimeStamped("Turing of lights").
+PrintTimeStamped("Turing on flood lights...").
 WAIT .2.
 TOGGLE AG14.
-PrintTimeStamped("Turing of lights").
+PrintTimeStamped("Turing on accent lights...").
 WAIT .2.
 TOGGLE AG15.
-PrintTimeStamped("Turing of lights").
+PrintTimeStamped("Turing on gondo cab lights...").
 WAIT .2.
 TOGGLE AG17.
-PrintTimeStamped("Turing of lights").
+PrintTimeStamped("Turing on habitat lights").
 WAIT .2.
 TOGGLE AG13.
 WAIT 4.
@@ -942,7 +1034,10 @@ WAIT 1.
 //depoly boom
 PrintTimeStamped("Deploying boom...").
 TOGGLE AG22.
-WAIT 15.
+WAIT 9.
+PrintTimeStamped("Deploy boom solar").
+TOGGLE AG31.
+wait 6.
 //LOCK moTOrs
 PrintTimeStamped("Locking motors").
 
@@ -954,7 +1049,7 @@ PrintTimeStamped("Deploy comms.").
 
 TOGGLE AG24.
 //deploy boom solar
-PrintTimeStamped("Deploy boom solar").
+
 WAIT 2.
 // depoly science
 // Cooling System
@@ -970,9 +1065,10 @@ SET burnTime TO calculateBurnTime().
 WAIT 1.
 SETKACAlarmForNextNode("KillWarp",600, "Burn to Eve!!!", "This burn was brought to you by Snacky Smores. Ride the Walrus!").
 WAIT 1.
-executeManeuver().
+// executeManeuver().
 WAIT 1.
-antisun().
+local awayFromSun is antisun().
+lock steering to lookdirup(-awayFromSun, ship:up:vector).
 
 //------------------Prepare to capture.---------------------------//
 // put everything away and turn on nukes. get a little rcs.

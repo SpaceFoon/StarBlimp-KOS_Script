@@ -17,28 +17,17 @@ function playChord {
     parameter chord, duration.
     // parameter chord, duration.
     // Play each note in the chord with a different voice
-    for chord in chord.{
-        for i in range(0, 3) {
-                // SET chordVoice TO GETVOICE(i+ 1).
-                // print chordVoice.
-                if i = 0{
-                    set chordVoice1 to getVoice(0).
-                    chordVoice1:PLAY(NOTE(chord[0], duration)).
-                }
-                if i = 1{
-                    set chordVoice2 to getVoice(1).
-                    chordVoice2:PLAY(NOTE(chord[1], duration)).
-                }
-                if i = 2{
-                    set chordVoice3 to getVoice(2).
-                    chordVoice3:PLAY(NOTE(chord[2], duration)).
-                }
-                if i = 3{
-                    set chordVoice4 to getVoice(3).
-                    chordVoice4:PLAY(NOTE(chord[3], duration)).
-                }
-            }
-    }
+
+    set chordVoice1 to getVoice(0).
+    chordVoice1:PLAY(NOTE(chord[0], duration)).
+
+    set chordVoice2 to getVoice(1).
+    chordVoice2:PLAY(NOTE(chord[1], duration)).
+
+    set chordVoice3 to getVoice(2).
+    chordVoice3:PLAY(NOTE(chord[2], duration)).
+
+    set chordVoice4 to getVoice(3).
     WAIT duration.
 }
 SET cchord TO LIST(
@@ -59,13 +48,17 @@ SET fchord TO LIST(
     "b3",
     "d4"
 ).
-
+SET pianoPart to LIST(
+    SETDURATION(75),
+    playChord(cchord, wholeNote),
+    playChord(dchord, wholeNote),
+    playChord(fchord, wholeNote)
+).
 Set voicePart to LIST(
     SETDURATION(75),
     //| = bar.
-    playChord(cchord, wholeNote),
-    note("R", quarternote + eigththNote),
-    
+        note("R", quarternote + eigththNote),
+    hudtext("A-mer - i-ca", 15, 2, 50, yellow, false),
     note("C4", eigththNote), // a-
     // hudtext("A", 30, 2, 50, yellow, false),
     note("C4", eigththNote), // m-
@@ -77,6 +70,5 @@ Set voicePart to LIST(
     // hudtext("A-mer -", 30, 2, 50, yellow, false),
     note("C4", eigththNote), // i-
     // hudtext("A-mer - i-", 30, 2, 50, yellow, false),
-    note("C4", halfNote),// ca
-    hudtext("A-mer - i-ca", 15, 2, 50, yellow, false)
+    note("C4", halfNote)// ca
 ).

@@ -192,7 +192,7 @@ function printShipStatus {
     print SHIP.CONNECTION.
     print "Dry Mass: " + ROUND(SHIP:drymass).
     print "Wet Mass: " + ROUND(SHIP:wetmass).
-    print "Actual Mass: " + ROUND(SHIP:mass).
+    print "Current Mass: " + ROUND(SHIP:mass).
     // print "Resources: " + SHIP:resources.
     print "==========================================".
 }

@@ -741,9 +741,11 @@ PRINTDivider("Launch stage: 5, LIFTOFF, WE HAVE LIFTOFF!!!").
 UNLOCK WHEELSTEERING.
 PrintTimeStamped("UNLOCK WHEELSTEERING.").
 
-// PrintTimeStamped("LOCK TO HEADING(90.2, -1, 0).").//90.2 because the runway is .4 and we want go 0 so I split the difference TO avoid TO much yaw at takeoff
+// PrintTimeStamped("LOCK TO HEADING(90.2, -1, 0).").
 
-// Hardest part: Lost alt, bounce off ground, lost alt, take a dip inthe water.
+//90.2 because the runway is .4 and we want go 0 so I split the difference TO avoid TO much yaw at takeoff
+
+// Hardest part: Lose alt, bounce off ground, lose alt, take a dip in the water.
 // Then finally gain alt or die in the water.
 // This should happen after tail gear strike. 
 WAIT UNTIL alt:radar > 15.
@@ -756,7 +758,7 @@ WAIT .8.
 PrintTimeStamped("Gear Up").
 GEAR OFF.
 WAIT 3.5.
-// so we can sTOp pulling up...
+// Level baloon now so we can stop pulling up later...
 lvlBaloon().
 
 // Finaly gaining alt
@@ -796,7 +798,8 @@ TOGGLE AG6.
 PrintTimeStamped("Flaps up damnt!").
 
 //225 m/s is enough TO start climbing.
-//this will keep you climbing without going TO fast TO save on fuel.
+//this will keep you climbing without going too fast to save on fuel.
+
 WAIT UNTIL SHIP:AIRSPEED > 200.
 PrintTimeStamped("AIRSPEED > 200 HEADING(90, 10, 0)").
 LOCK STEERING TO HEADING(90, 10, 0).
@@ -958,7 +961,7 @@ CLEARSCREEN.
 PRINTDivider("Launch stage: 10, Coast TO Space!").
 WAIT until ship:altitude >= 70100.
 
-PRINTDivider("Launch stage: 10, Blimps in SPAAAAAACE!").
+PRINTDivider("Launch stage: 11, Blimps in SPAAAAAACE!").
 ControlSurfacesOff().
 PrintTimeStamped("Aero Control Surfaces OFF.").
 WAIT.5.
@@ -1074,15 +1077,16 @@ lock steering to lookdirup(-awayFromSun, ship:up:vector).
 // put everything away and turn on nukes. get a little rcs.
 //--------------------Capture and areobrake-----------------------//
 // probably come in retrograde and burn then turn around real quick
-// to hit the atmo leaving 50 dv left for adjustments on the final part
+// to hit the atmo leaving 50 dv left for adjustments on the final pass
 //---------------------Entry--------------------------------------//
 // ag8 for pitch with airbrake. use airbrakes as brakes until pitching too much
 // flip over, start fans, fly up to stall, eject heat shield. 
 //---------------------Find a place to land-----------------------//
-
+// Just find a flat place or water.
 //----------------------Land--------------------------------------//
-
+// 
 //-------------------Open up the craft for long journey-----------//
+  // at least make a script for this part
 
 // //open hanger
 // TOGGLE AG43.

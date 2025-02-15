@@ -12,8 +12,8 @@ FUNCTION formatMET
 {
   LOCAL ts IS TIME + MISSIONTIME - TIME:SECONDS.
   RETURN "[T+" 
-    + padZ(ts:YEAR - 1) + "-" // subtracts 1 TO get years elapsed, not game year
-    + padZ(ts:DAY - 1,3) + " " // subtracts 1 TO get days elapsed, not day of year. What is the 3 for?
+    + padZ(ts:YEAR - 1) + "-" // subtracts 1 to get years elapsed, not game year
+    + padZ(ts:DAY - 1,3) + " " // subtracts 1 to get days elapsed, not day of year. What is the 3 for?
     + padZ(ts:HOUR) + ":"
     + padZ(ts:MINUTE) + ":"
     + padZ(ROUND(ts:SECOND))+ "]".

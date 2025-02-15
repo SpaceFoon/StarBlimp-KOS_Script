@@ -1,5 +1,7 @@
 # StarBlimp-KOS_Script
 
+For those who do not know, KOS (Kerbal Operation System) is build on KS (Kerbo script) and is for the automation of any function in Kerbal Space Program. It's similar to BASIC and comes with a terminal and even telenet support.
+
 ## main/launch.ks
 
 KOS script that automates the entire launch procedure, from pre-launch preparations to entering the atmosphere of another planet.
@@ -19,4 +21,4 @@ The only midi player for KOS!
 
 ### /test
 
-A collection of script I found or wrote/modified to test before adding to the big script.
+A collection of scripts I found or wrote/modified to test before adding to the big script.

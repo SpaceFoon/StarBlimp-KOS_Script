@@ -1,0 +1,36 @@
+{
+    "NAME":"Baker Operating System",
+    "URL":"https://forum.kerbalspaceprogram.com/index.php?/topic/208760-180-112x-baker-operating-system-v220-a-kos-rpm-iva-gui-autopilot-script/",
+    "DOWNLOAD":"https://spacedock.info/mod/3052/Baker%20Operating%20System#changelog",
+    "GITHUB":
+    {
+        "USERNAME":"SelfAwareMatter",
+        "REPOSITORY":"https://github.com/SelfAwareMatter/BakerOS",
+        "ALLOW_PRE_RELEASE":false,
+    },
+    "VERSION":
+    {
+        "MAJOR":2,
+        "MINOR":2,
+        "PATCH":0,
+        "BUILD":0
+    },
+    "KSP_VERSION":
+    {
+        "MAJOR":1,
+        "MINOR":12,
+        "PATCH":3
+    },
+    "KSP_VERSION_MIN":
+    {
+        "MAJOR":1,
+        "MINOR":8,
+        "PATCH":0
+    },
+    "KSP_VERSION_MAX":
+    {
+        "MAJOR":1,
+        "MINOR":99,
+        "PATCH":0
+    }
+}

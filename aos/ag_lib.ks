@@ -1,0 +1,635 @@
+// Utility helpers for working with high-numbered action groups in kOS.
+// kOS requires literal AG identifiers, so we map descriptive labels from
+// `AGX_LEGEND` to the corresponding AG# commands.
+//
+// The public helpers operate on strings first: provide a label, and the
+// library resolves the IDs, toggles the underlying groups, and exposes
+// convenience queries for listing or checking active action groups.
+
+FUNCTION AG_RESOLVE_IDS {
+  PARAMETER ag_input.
+
+  LOCAL result IS LIST().
+
+  IF ag_input:TYPENAME = "List" {
+    FOR entry IN ag_input {
+      LOCAL sublist IS AG_RESOLVE_IDS(entry).
+      FOR subentry IN sublist {
+        IF NOT result:CONTAINS(subentry) {
+          result:ADD(subentry).
+        }.
+      }.
+    }.
+    RETURN result.
+  }.
+
+  IF ag_input:TYPENAME = "String" {
+    IF NOT AGX_LEGEND:HASKEY(ag_input) {
+      PRINT "[AG_LIB] Unknown action group label: " + ag_input + ".".
+      RETURN result.
+    }.
+    RETURN AG_RESOLVE_IDS(AGX_LEGEND[ag_input]).
+  }.
+
+  IF ag_input:TYPENAME = "Scalar" {
+    LOCAL ag_id IS FLOOR(ag_input).
+    IF ag_id <> ag_input {
+      PRINT "[AG_LIB] Action group ID must be an integer: " + ag_input + ".".
+      RETURN result.
+    }.
+    result:ADD(ag_id).
+    RETURN result.
+  }.
+
+  PRINT "[AG_LIB] Unsupported action group input: " + ag_input + ".".
+  RETURN result.
+}
+
+FUNCTION AG_NATIVE_TOGGLE {
+  PARAMETER id.
+
+  IF id = 0 {
+    IF SHIP:CONTROL:GEAR {
+      GEAR OFF.
+    } ELSE {
+      GEAR ON.
+    }.
+    RETURN.
+  }.
+
+       IF id = 1 { TOGGLE AG1. }
+  ELSE IF id = 2 { TOGGLE AG2. }
+  ELSE IF id = 3 { TOGGLE AG3. }
+  ELSE IF id = 4 { TOGGLE AG4. }
+  ELSE IF id = 5 { TOGGLE AG5. }
+  ELSE IF id = 6 { TOGGLE AG6. }
+  ELSE IF id = 7 { TOGGLE AG7. }
+  ELSE IF id = 8 { TOGGLE AG8. }
+  ELSE IF id = 9 { TOGGLE AG9. }
+  ELSE IF id = 10 { TOGGLE AG10. }
+  ELSE IF id = 11 { TOGGLE AG11. }
+  ELSE IF id = 12 { TOGGLE AG12. }
+  ELSE IF id = 13 { TOGGLE AG13. }
+  ELSE IF id = 14 { TOGGLE AG14. }
+  ELSE IF id = 15 { TOGGLE AG15. }
+  ELSE IF id = 16 { TOGGLE AG16. }
+  ELSE IF id = 17 { TOGGLE AG17. }
+  ELSE IF id = 18 { TOGGLE AG18. }
+  ELSE IF id = 19 { TOGGLE AG19. }
+  ELSE IF id = 20 { TOGGLE AG20. }
+  ELSE IF id = 21 { TOGGLE AG21. }
+  ELSE IF id = 22 { TOGGLE AG22. }
+  ELSE IF id = 23 { TOGGLE AG23. }
+  ELSE IF id = 24 { TOGGLE AG24. }
+  ELSE IF id = 25 { TOGGLE AG25. }
+  ELSE IF id = 26 { TOGGLE AG26. }
+  ELSE IF id = 27 { TOGGLE AG27. }
+  ELSE IF id = 28 { TOGGLE AG28. }
+  ELSE IF id = 29 { TOGGLE AG29. }
+  ELSE IF id = 30 { TOGGLE AG30. }
+  ELSE IF id = 31 { TOGGLE AG31. }
+  ELSE IF id = 32 { TOGGLE AG32. }
+  ELSE IF id = 33 { TOGGLE AG33. }
+  ELSE IF id = 34 { TOGGLE AG34. }
+  ELSE IF id = 35 { TOGGLE AG35. }
+  ELSE IF id = 36 { TOGGLE AG36. }
+  ELSE IF id = 37 { TOGGLE AG37. }
+  ELSE IF id = 38 { TOGGLE AG38. }
+  ELSE IF id = 39 { TOGGLE AG39. }
+  ELSE IF id = 40 { TOGGLE AG40. }
+  ELSE IF id = 41 { TOGGLE AG41. }
+  ELSE IF id = 42 { TOGGLE AG42. }
+  ELSE IF id = 43 { TOGGLE AG43. }
+  ELSE IF id = 44 { TOGGLE AG44. }
+  ELSE IF id = 45 { TOGGLE AG45. }
+  ELSE IF id = 46 { TOGGLE AG46. }
+  ELSE IF id = 47 { TOGGLE AG47. }
+  ELSE IF id = 48 { TOGGLE AG48. }
+  ELSE IF id = 49 { TOGGLE AG49. }
+  ELSE IF id = 50 { TOGGLE AG50. }
+  ELSE IF id = 51 { TOGGLE AG51. }
+  ELSE IF id = 52 { TOGGLE AG52. }
+  ELSE IF id = 53 { TOGGLE AG53. }
+  ELSE IF id = 54 { TOGGLE AG54. }
+  ELSE IF id = 55 { TOGGLE AG55. }
+  ELSE IF id = 56 { TOGGLE AG56. }
+  ELSE IF id = 57 { TOGGLE AG57. }
+  ELSE IF id = 58 { TOGGLE AG58. }
+  ELSE IF id = 59 { TOGGLE AG59. }
+  ELSE IF id = 60 { TOGGLE AG60. }
+  ELSE IF id = 61 { TOGGLE AG61. }
+  ELSE IF id = 62 { TOGGLE AG62. }
+  ELSE IF id = 63 { TOGGLE AG63. }
+  ELSE IF id = 64 { TOGGLE AG64. }
+  ELSE IF id = 65 { TOGGLE AG65. }
+  ELSE IF id = 66 { TOGGLE AG66. }
+  ELSE IF id = 67 { TOGGLE AG67. }
+  ELSE IF id = 68 { TOGGLE AG68. }
+  ELSE IF id = 69 { TOGGLE AG69. }
+  ELSE IF id = 70 { TOGGLE AG70. }
+  ELSE IF id = 71 { TOGGLE AG71. }
+  ELSE IF id = 72 { TOGGLE AG72. }
+  ELSE IF id = 73 { TOGGLE AG73. }
+  ELSE IF id = 74 { TOGGLE AG74. }
+  ELSE IF id = 75 { TOGGLE AG75. }
+  ELSE IF id = 76 { TOGGLE AG76. }
+  ELSE IF id = 77 { TOGGLE AG77. }
+  ELSE IF id = 78 { TOGGLE AG78. }
+  ELSE IF id = 79 { TOGGLE AG79. }
+  ELSE IF id = 80 { TOGGLE AG80. }
+  ELSE IF id = 81 { TOGGLE AG81. }
+  ELSE IF id = 82 { TOGGLE AG82. }
+  ELSE IF id = 83 { TOGGLE AG83. }
+  ELSE IF id = 84 { TOGGLE AG84. }
+  ELSE IF id = 85 { TOGGLE AG85. }
+  ELSE IF id = 86 { TOGGLE AG86. }
+  ELSE IF id = 87 { TOGGLE AG87. }
+  ELSE IF id = 88 { TOGGLE AG88. }
+  ELSE IF id = 89 { TOGGLE AG89. }
+  ELSE IF id = 90 { TOGGLE AG90. }
+  ELSE IF id = 91 { TOGGLE AG91. }
+  ELSE IF id = 92 { TOGGLE AG92. }
+  ELSE IF id = 93 { TOGGLE AG93. }
+  ELSE IF id = 94 { TOGGLE AG94. }
+  ELSE IF id = 95 { TOGGLE AG95. }
+  ELSE IF id = 96 { TOGGLE AG96. }
+  ELSE IF id = 97 { TOGGLE AG97. }
+  ELSE IF id = 98 { TOGGLE AG98. }
+  ELSE IF id = 99 { TOGGLE AG99. }
+  ELSE IF id = 100 { TOGGLE AG100. }
+  ELSE IF id = 101 { TOGGLE AG101. }
+  ELSE IF id = 102 { TOGGLE AG102. }
+  ELSE IF id = 103 { TOGGLE AG103. }
+  ELSE IF id = 104 { TOGGLE AG104. }
+  ELSE IF id = 105 { TOGGLE AG105. }
+  ELSE IF id = 106 { TOGGLE AG106. }
+  ELSE IF id = 107 { TOGGLE AG107. }
+  ELSE IF id = 108 { TOGGLE AG108. }
+  ELSE IF id = 109 { TOGGLE AG109. }
+  ELSE IF id = 110 { TOGGLE AG110. }
+  ELSE IF id = 111 { TOGGLE AG111. }
+  ELSE IF id = 112 { TOGGLE AG112. }
+  ELSE IF id = 113 { TOGGLE AG113. }
+  ELSE IF id = 114 { TOGGLE AG114. }
+  ELSE IF id = 115 { TOGGLE AG115. }
+  ELSE IF id = 116 { TOGGLE AG116. }
+  ELSE IF id = 117 { TOGGLE AG117. }
+  ELSE IF id = 118 { TOGGLE AG118. }
+  ELSE IF id = 119 { TOGGLE AG119. }
+  ELSE IF id = 120 { TOGGLE AG120. }
+  ELSE IF id = 121 { TOGGLE AG121. }
+  ELSE IF id = 122 { TOGGLE AG122. }
+  ELSE IF id = 123 { TOGGLE AG123. }
+  ELSE IF id = 124 { TOGGLE AG124. }
+  ELSE IF id = 125 { TOGGLE AG125. }
+  ELSE IF id = 126 { TOGGLE AG126. }
+  ELSE IF id = 127 { TOGGLE AG127. }
+  ELSE IF id = 128 { TOGGLE AG128. }
+  ELSE IF id = 129 { TOGGLE AG129. }
+  ELSE IF id = 130 { TOGGLE AG130. }
+  ELSE IF id = 131 { TOGGLE AG131. }
+  ELSE IF id = 132 { TOGGLE AG132. }
+  ELSE IF id = 133 { TOGGLE AG133. }
+  ELSE IF id = 134 { TOGGLE AG134. }
+  ELSE IF id = 135 { TOGGLE AG135. }
+  ELSE IF id = 136 { TOGGLE AG136. }
+  ELSE IF id = 137 { TOGGLE AG137. }
+  ELSE IF id = 138 { TOGGLE AG138. }
+  ELSE IF id = 139 { TOGGLE AG139. }
+  ELSE IF id = 140 { TOGGLE AG140. }
+  ELSE IF id = 141 { TOGGLE AG141. }
+  ELSE IF id = 142 { TOGGLE AG142. }
+  ELSE IF id = 143 { TOGGLE AG143. }
+  ELSE IF id = 144 { TOGGLE AG144. }
+  ELSE IF id = 145 { TOGGLE AG145. }
+  ELSE IF id = 146 { TOGGLE AG146. }
+  ELSE IF id = 147 { TOGGLE AG147. }
+  ELSE IF id = 148 { TOGGLE AG148. }
+  ELSE IF id = 149 { TOGGLE AG149. }
+  ELSE IF id = 150 { TOGGLE AG150. }
+  ELSE IF id = 151 { TOGGLE AG151. }
+  ELSE IF id = 152 { TOGGLE AG152. }
+  ELSE IF id = 153 { TOGGLE AG153. }
+  ELSE IF id = 154 { TOGGLE AG154. }
+  ELSE IF id = 155 { TOGGLE AG155. }
+  ELSE IF id = 156 { TOGGLE AG156. }
+  ELSE IF id = 157 { TOGGLE AG157. }
+  ELSE IF id = 158 { TOGGLE AG158. }
+  ELSE IF id = 159 { TOGGLE AG159. }
+  ELSE IF id = 160 { TOGGLE AG160. }
+  ELSE IF id = 161 { TOGGLE AG161. }
+  ELSE IF id = 162 { TOGGLE AG162. }
+  ELSE IF id = 163 { TOGGLE AG163. }
+  ELSE IF id = 164 { TOGGLE AG164. }
+  ELSE IF id = 165 { TOGGLE AG165. }
+  ELSE IF id = 166 { TOGGLE AG166. }
+  ELSE IF id = 167 { TOGGLE AG167. }
+  ELSE IF id = 168 { TOGGLE AG168. }
+  ELSE IF id = 169 { TOGGLE AG169. }
+  ELSE IF id = 170 { TOGGLE AG170. }
+  ELSE IF id = 171 { TOGGLE AG171. }
+  ELSE IF id = 172 { TOGGLE AG172. }
+  ELSE IF id = 173 { TOGGLE AG173. }
+  ELSE IF id = 174 { TOGGLE AG174. }
+  ELSE IF id = 175 { TOGGLE AG175. }
+  ELSE IF id = 176 { TOGGLE AG176. }
+  ELSE IF id = 177 { TOGGLE AG177. }
+  ELSE IF id = 178 { TOGGLE AG178. }
+  ELSE IF id = 179 { TOGGLE AG179. }
+  ELSE IF id = 180 { TOGGLE AG180. }
+  ELSE IF id = 181 { TOGGLE AG181. }
+  ELSE IF id = 182 { TOGGLE AG182. }
+  ELSE IF id = 183 { TOGGLE AG183. }
+  ELSE IF id = 184 { TOGGLE AG184. }
+  ELSE IF id = 185 { TOGGLE AG185. }
+  ELSE IF id = 186 { TOGGLE AG186. }
+  ELSE IF id = 187 { TOGGLE AG187. }
+  ELSE IF id = 188 { TOGGLE AG188. }
+  ELSE IF id = 189 { TOGGLE AG189. }
+  ELSE IF id = 190 { TOGGLE AG190. }
+  ELSE IF id = 191 { TOGGLE AG191. }
+  ELSE IF id = 192 { TOGGLE AG192. }
+  ELSE IF id = 193 { TOGGLE AG193. }
+  ELSE IF id = 194 { TOGGLE AG194. }
+  ELSE IF id = 195 { TOGGLE AG195. }
+  ELSE IF id = 196 { TOGGLE AG196. }
+  ELSE IF id = 197 { TOGGLE AG197. }
+  ELSE IF id = 198 { TOGGLE AG198. }
+  ELSE IF id = 199 { TOGGLE AG199. }
+  ELSE IF id = 200 { TOGGLE AG200. }
+  ELSE IF id = 201 { TOGGLE AG201. }
+  ELSE IF id = 202 { TOGGLE AG202. }
+  ELSE IF id = 203 { TOGGLE AG203. }
+  ELSE IF id = 204 { TOGGLE AG204. }
+  ELSE IF id = 205 { TOGGLE AG205. }
+  ELSE IF id = 206 { TOGGLE AG206. }
+  ELSE IF id = 207 { TOGGLE AG207. }
+  ELSE IF id = 208 { TOGGLE AG208. }
+  ELSE IF id = 209 { TOGGLE AG209. }
+  ELSE IF id = 210 { TOGGLE AG210. }
+  ELSE IF id = 211 { TOGGLE AG211. }
+  ELSE IF id = 212 { TOGGLE AG212. }
+  ELSE IF id = 213 { TOGGLE AG213. }
+  ELSE IF id = 214 { TOGGLE AG214. }
+  ELSE IF id = 215 { TOGGLE AG215. }
+  ELSE IF id = 216 { TOGGLE AG216. }
+  ELSE IF id = 217 { TOGGLE AG217. }
+  ELSE IF id = 218 { TOGGLE AG218. }
+  ELSE IF id = 219 { TOGGLE AG219. }
+  ELSE IF id = 220 { TOGGLE AG220. }
+  ELSE IF id = 221 { TOGGLE AG221. }
+  ELSE IF id = 222 { TOGGLE AG222. }
+  ELSE IF id = 223 { TOGGLE AG223. }
+  ELSE IF id = 224 { TOGGLE AG224. }
+  ELSE IF id = 225 { TOGGLE AG225. }
+  ELSE IF id = 226 { TOGGLE AG226. }
+  ELSE IF id = 227 { TOGGLE AG227. }
+  ELSE IF id = 228 { TOGGLE AG228. }
+  ELSE IF id = 229 { TOGGLE AG229. }
+  ELSE IF id = 230 { TOGGLE AG230. }
+  ELSE IF id = 231 { TOGGLE AG231. }
+  ELSE IF id = 232 { TOGGLE AG232. }
+  ELSE IF id = 233 { TOGGLE AG233. }
+  ELSE IF id = 234 { TOGGLE AG234. }
+  ELSE IF id = 235 { TOGGLE AG235. }
+  ELSE IF id = 236 { TOGGLE AG236. }
+  ELSE IF id = 237 { TOGGLE AG237. }
+  ELSE IF id = 238 { TOGGLE AG238. }
+  ELSE IF id = 239 { TOGGLE AG239. }
+  ELSE IF id = 240 { TOGGLE AG240. }
+  ELSE IF id = 241 { TOGGLE AG241. }
+  ELSE IF id = 242 { TOGGLE AG242. }
+  ELSE IF id = 243 { TOGGLE AG243. }
+  ELSE IF id = 244 { TOGGLE AG244. }
+  ELSE IF id = 245 { TOGGLE AG245. }
+  ELSE IF id = 246 { TOGGLE AG246. }
+  ELSE IF id = 247 { TOGGLE AG247. }
+  ELSE IF id = 248 { TOGGLE AG248. }
+  ELSE IF id = 249 { TOGGLE AG249. }
+  ELSE IF id = 250 { TOGGLE AG250. }
+  ELSE IF id = 251 { TOGGLE AG251. }
+  ELSE IF id = 252 { TOGGLE AG252. }
+  ELSE IF id = 253 { TOGGLE AG253. }
+  ELSE IF id = 254 { TOGGLE AG254. }
+  ELSE IF id = 255 { TOGGLE AG255. }
+  ELSE {
+    PRINT "[AG_LIB] No native toggle available for AG ID " + id + ".".
+  }.
+}
+
+FUNCTION AG_NATIVE_IS_ACTIVE {
+  PARAMETER id.
+
+  IF id = 0 { RETURN SHIP:CONTROL:GEAR. }
+
+       IF id = 1 { RETURN AG1. }
+  ELSE IF id = 2 { RETURN AG2. }
+  ELSE IF id = 3 { RETURN AG3. }
+  ELSE IF id = 4 { RETURN AG4. }
+  ELSE IF id = 5 { RETURN AG5. }
+  ELSE IF id = 6 { RETURN AG6. }
+  ELSE IF id = 7 { RETURN AG7. }
+  ELSE IF id = 8 { RETURN AG8. }
+  ELSE IF id = 9 { RETURN AG9. }
+  ELSE IF id = 10 { RETURN AG10. }
+  ELSE IF id = 11 { RETURN AG11. }
+  ELSE IF id = 12 { RETURN AG12. }
+  ELSE IF id = 13 { RETURN AG13. }
+  ELSE IF id = 14 { RETURN AG14. }
+  ELSE IF id = 15 { RETURN AG15. }
+  ELSE IF id = 16 { RETURN AG16. }
+  ELSE IF id = 17 { RETURN AG17. }
+  ELSE IF id = 18 { RETURN AG18. }
+  ELSE IF id = 19 { RETURN AG19. }
+  ELSE IF id = 20 { RETURN AG20. }
+  ELSE IF id = 21 { RETURN AG21. }
+  ELSE IF id = 22 { RETURN AG22. }
+  ELSE IF id = 23 { RETURN AG23. }
+  ELSE IF id = 24 { RETURN AG24. }
+  ELSE IF id = 25 { RETURN AG25. }
+  ELSE IF id = 26 { RETURN AG26. }
+  ELSE IF id = 27 { RETURN AG27. }
+  ELSE IF id = 28 { RETURN AG28. }
+  ELSE IF id = 29 { RETURN AG29. }
+  ELSE IF id = 30 { RETURN AG30. }
+  ELSE IF id = 31 { RETURN AG31. }
+  ELSE IF id = 32 { RETURN AG32. }
+  ELSE IF id = 33 { RETURN AG33. }
+  ELSE IF id = 34 { RETURN AG34. }
+  ELSE IF id = 35 { RETURN AG35. }
+  ELSE IF id = 36 { RETURN AG36. }
+  ELSE IF id = 37 { RETURN AG37. }
+  ELSE IF id = 38 { RETURN AG38. }
+  ELSE IF id = 39 { RETURN AG39. }
+  ELSE IF id = 40 { RETURN AG40. }
+  ELSE IF id = 41 { RETURN AG41. }
+  ELSE IF id = 42 { RETURN AG42. }
+  ELSE IF id = 43 { RETURN AG43. }
+  ELSE IF id = 44 { RETURN AG44. }
+  ELSE IF id = 45 { RETURN AG45. }
+  ELSE IF id = 46 { RETURN AG46. }
+  ELSE IF id = 47 { RETURN AG47. }
+  ELSE IF id = 48 { RETURN AG48. }
+  ELSE IF id = 49 { RETURN AG49. }
+  ELSE IF id = 50 { RETURN AG50. }
+  ELSE IF id = 51 { RETURN AG51. }
+  ELSE IF id = 52 { RETURN AG52. }
+  ELSE IF id = 53 { RETURN AG53. }
+  ELSE IF id = 54 { RETURN AG54. }
+  ELSE IF id = 55 { RETURN AG55. }
+  ELSE IF id = 56 { RETURN AG56. }
+  ELSE IF id = 57 { RETURN AG57. }
+  ELSE IF id = 58 { RETURN AG58. }
+  ELSE IF id = 59 { RETURN AG59. }
+  ELSE IF id = 60 { RETURN AG60. }
+  ELSE IF id = 61 { RETURN AG61. }
+  ELSE IF id = 62 { RETURN AG62. }
+  ELSE IF id = 63 { RETURN AG63. }
+  ELSE IF id = 64 { RETURN AG64. }
+  ELSE IF id = 65 { RETURN AG65. }
+  ELSE IF id = 66 { RETURN AG66. }
+  ELSE IF id = 67 { RETURN AG67. }
+  ELSE IF id = 68 { RETURN AG68. }
+  ELSE IF id = 69 { RETURN AG69. }
+  ELSE IF id = 70 { RETURN AG70. }
+  ELSE IF id = 71 { RETURN AG71. }
+  ELSE IF id = 72 { RETURN AG72. }
+  ELSE IF id = 73 { RETURN AG73. }
+  ELSE IF id = 74 { RETURN AG74. }
+  ELSE IF id = 75 { RETURN AG75. }
+  ELSE IF id = 76 { RETURN AG76. }
+  ELSE IF id = 77 { RETURN AG77. }
+  ELSE IF id = 78 { RETURN AG78. }
+  ELSE IF id = 79 { RETURN AG79. }
+  ELSE IF id = 80 { RETURN AG80. }
+  ELSE IF id = 81 { RETURN AG81. }
+  ELSE IF id = 82 { RETURN AG82. }
+  ELSE IF id = 83 { RETURN AG83. }
+  ELSE IF id = 84 { RETURN AG84. }
+  ELSE IF id = 85 { RETURN AG85. }
+  ELSE IF id = 86 { RETURN AG86. }
+  ELSE IF id = 87 { RETURN AG87. }
+  ELSE IF id = 88 { RETURN AG88. }
+  ELSE IF id = 89 { RETURN AG89. }
+  ELSE IF id = 90 { RETURN AG90. }
+  ELSE IF id = 91 { RETURN AG91. }
+  ELSE IF id = 92 { RETURN AG92. }
+  ELSE IF id = 93 { RETURN AG93. }
+  ELSE IF id = 94 { RETURN AG94. }
+  ELSE IF id = 95 { RETURN AG95. }
+  ELSE IF id = 96 { RETURN AG96. }
+  ELSE IF id = 97 { RETURN AG97. }
+  ELSE IF id = 98 { RETURN AG98. }
+  ELSE IF id = 99 { RETURN AG99. }
+  ELSE IF id = 100 { RETURN AG100. }
+  ELSE IF id = 101 { RETURN AG101. }
+  ELSE IF id = 102 { RETURN AG102. }
+  ELSE IF id = 103 { RETURN AG103. }
+  ELSE IF id = 104 { RETURN AG104. }
+  ELSE IF id = 105 { RETURN AG105. }
+  ELSE IF id = 106 { RETURN AG106. }
+  ELSE IF id = 107 { RETURN AG107. }
+  ELSE IF id = 108 { RETURN AG108. }
+  ELSE IF id = 109 { RETURN AG109. }
+  ELSE IF id = 110 { RETURN AG110. }
+  ELSE IF id = 111 { RETURN AG111. }
+  ELSE IF id = 112 { RETURN AG112. }
+  ELSE IF id = 113 { RETURN AG113. }
+  ELSE IF id = 114 { RETURN AG114. }
+  ELSE IF id = 115 { RETURN AG115. }
+  ELSE IF id = 116 { RETURN AG116. }
+  ELSE IF id = 117 { RETURN AG117. }
+  ELSE IF id = 118 { RETURN AG118. }
+  ELSE IF id = 119 { RETURN AG119. }
+  ELSE IF id = 120 { RETURN AG120. }
+  ELSE IF id = 121 { RETURN AG121. }
+  ELSE IF id = 122 { RETURN AG122. }
+  ELSE IF id = 123 { RETURN AG123. }
+  ELSE IF id = 124 { RETURN AG124. }
+  ELSE IF id = 125 { RETURN AG125. }
+  ELSE IF id = 126 { RETURN AG126. }
+  ELSE IF id = 127 { RETURN AG127. }
+  ELSE IF id = 128 { RETURN AG128. }
+  ELSE IF id = 129 { RETURN AG129. }
+  ELSE IF id = 130 { RETURN AG130. }
+  ELSE IF id = 131 { RETURN AG131. }
+  ELSE IF id = 132 { RETURN AG132. }
+  ELSE IF id = 133 { RETURN AG133. }
+  ELSE IF id = 134 { RETURN AG134. }
+  ELSE IF id = 135 { RETURN AG135. }
+  ELSE IF id = 136 { RETURN AG136. }
+  ELSE IF id = 137 { RETURN AG137. }
+  ELSE IF id = 138 { RETURN AG138. }
+  ELSE IF id = 139 { RETURN AG139. }
+  ELSE IF id = 140 { RETURN AG140. }
+  ELSE IF id = 141 { RETURN AG141. }
+  ELSE IF id = 142 { RETURN AG142. }
+  ELSE IF id = 143 { RETURN AG143. }
+  ELSE IF id = 144 { RETURN AG144. }
+  ELSE IF id = 145 { RETURN AG145. }
+  ELSE IF id = 146 { RETURN AG146. }
+  ELSE IF id = 147 { RETURN AG147. }
+  ELSE IF id = 148 { RETURN AG148. }
+  ELSE IF id = 149 { RETURN AG149. }
+  ELSE IF id = 150 { RETURN AG150. }
+  ELSE IF id = 151 { RETURN AG151. }
+  ELSE IF id = 152 { RETURN AG152. }
+  ELSE IF id = 153 { RETURN AG153. }
+  ELSE IF id = 154 { RETURN AG154. }
+  ELSE IF id = 155 { RETURN AG155. }
+  ELSE IF id = 156 { RETURN AG156. }
+  ELSE IF id = 157 { RETURN AG157. }
+  ELSE IF id = 158 { RETURN AG158. }
+  ELSE IF id = 159 { RETURN AG159. }
+  ELSE IF id = 160 { RETURN AG160. }
+  ELSE IF id = 161 { RETURN AG161. }
+  ELSE IF id = 162 { RETURN AG162. }
+  ELSE IF id = 163 { RETURN AG163. }
+  ELSE IF id = 164 { RETURN AG164. }
+  ELSE IF id = 165 { RETURN AG165. }
+  ELSE IF id = 166 { RETURN AG166. }
+  ELSE IF id = 167 { RETURN AG167. }
+  ELSE IF id = 168 { RETURN AG168. }
+  ELSE IF id = 169 { RETURN AG169. }
+  ELSE IF id = 170 { RETURN AG170. }
+  ELSE IF id = 171 { RETURN AG171. }
+  ELSE IF id = 172 { RETURN AG172. }
+  ELSE IF id = 173 { RETURN AG173. }
+  ELSE IF id = 174 { RETURN AG174. }
+  ELSE IF id = 175 { RETURN AG175. }
+  ELSE IF id = 176 { RETURN AG176. }
+  ELSE IF id = 177 { RETURN AG177. }
+  ELSE IF id = 178 { RETURN AG178. }
+  ELSE IF id = 179 { RETURN AG179. }
+  ELSE IF id = 180 { RETURN AG180. }
+  ELSE IF id = 181 { RETURN AG181. }
+  ELSE IF id = 182 { RETURN AG182. }
+  ELSE IF id = 183 { RETURN AG183. }
+  ELSE IF id = 184 { RETURN AG184. }
+  ELSE IF id = 185 { RETURN AG185. }
+  ELSE IF id = 186 { RETURN AG186. }
+  ELSE IF id = 187 { RETURN AG187. }
+  ELSE IF id = 188 { RETURN AG188. }
+  ELSE IF id = 189 { RETURN AG189. }
+  ELSE IF id = 190 { RETURN AG190. }
+  ELSE IF id = 191 { RETURN AG191. }
+  ELSE IF id = 192 { RETURN AG192. }
+  ELSE IF id = 193 { RETURN AG193. }
+  ELSE IF id = 194 { RETURN AG194. }
+  ELSE IF id = 195 { RETURN AG195. }
+  ELSE IF id = 196 { RETURN AG196. }
+  ELSE IF id = 197 { RETURN AG197. }
+  ELSE IF id = 198 { RETURN AG198. }
+  ELSE IF id = 199 { RETURN AG199. }
+  ELSE IF id = 200 { RETURN AG200. }
+  ELSE IF id = 201 { RETURN AG201. }
+  ELSE IF id = 202 { RETURN AG202. }
+  ELSE IF id = 203 { RETURN AG203. }
+  ELSE IF id = 204 { RETURN AG204. }
+  ELSE IF id = 205 { RETURN AG205. }
+  ELSE IF id = 206 { RETURN AG206. }
+  ELSE IF id = 207 { RETURN AG207. }
+  ELSE IF id = 208 { RETURN AG208. }
+  ELSE IF id = 209 { RETURN AG209. }
+  ELSE IF id = 210 { RETURN AG210. }
+  ELSE IF id = 211 { RETURN AG211. }
+  ELSE IF id = 212 { RETURN AG212. }
+  ELSE IF id = 213 { RETURN AG213. }
+  ELSE IF id = 214 { RETURN AG214. }
+  ELSE IF id = 215 { RETURN AG215. }
+  ELSE IF id = 216 { RETURN AG216. }
+  ELSE IF id = 217 { RETURN AG217. }
+  ELSE IF id = 218 { RETURN AG218. }
+  ELSE IF id = 219 { RETURN AG219. }
+  ELSE IF id = 220 { RETURN AG220. }
+  ELSE IF id = 221 { RETURN AG221. }
+  ELSE IF id = 222 { RETURN AG222. }
+  ELSE IF id = 223 { RETURN AG223. }
+  ELSE IF id = 224 { RETURN AG224. }
+  ELSE IF id = 225 { RETURN AG225. }
+  ELSE IF id = 226 { RETURN AG226. }
+  ELSE IF id = 227 { RETURN AG227. }
+  ELSE IF id = 228 { RETURN AG228. }
+  ELSE IF id = 229 { RETURN AG229. }
+  ELSE IF id = 230 { RETURN AG230. }
+  ELSE IF id = 231 { RETURN AG231. }
+  ELSE IF id = 232 { RETURN AG232. }
+  ELSE IF id = 233 { RETURN AG233. }
+  ELSE IF id = 234 { RETURN AG234. }
+  ELSE IF id = 235 { RETURN AG235. }
+  ELSE IF id = 236 { RETURN AG236. }
+  ELSE IF id = 237 { RETURN AG237. }
+  ELSE IF id = 238 { RETURN AG238. }
+  ELSE IF id = 239 { RETURN AG239. }
+  ELSE IF id = 240 { RETURN AG240. }
+  ELSE IF id = 241 { RETURN AG241. }
+  ELSE IF id = 242 { RETURN AG242. }
+  ELSE IF id = 243 { RETURN AG243. }
+  ELSE IF id = 244 { RETURN AG244. }
+  ELSE IF id = 245 { RETURN AG245. }
+  ELSE IF id = 246 { RETURN AG246. }
+  ELSE IF id = 247 { RETURN AG247. }
+  ELSE IF id = 248 { RETURN AG248. }
+  ELSE IF id = 249 { RETURN AG249. }
+  ELSE IF id = 250 { RETURN AG250. }
+  ELSE IF id = 251 { RETURN AG251. }
+  ELSE IF id = 252 { RETURN AG252. }
+  ELSE IF id = 253 { RETURN AG253. }
+  ELSE IF id = 254 { RETURN AG254. }
+  ELSE IF id = 255 { RETURN AG255. }
+  ELSE {
+    PRINT "[AG_LIB] No native state available for AG ID " + id + ".".
+    RETURN FALSE.
+  }.
+}
+
+FUNCTION AG_TOGGLE {
+  PARAMETER ag.
+  LOCAL ag_ids IS AG_RESOLVE_IDS(ag).
+  IF ag_ids:LENGTH = 0 { RETURN. }
+
+  FOR ag_id IN ag_ids {
+    AG_NATIVE_TOGGLE(ag_id).
+  }.
+}.
+
+FUNCTION AG_IS_ACTIVE {
+  PARAMETER ag.
+  LOCAL ag_ids IS AG_RESOLVE_IDS(ag).
+  IF ag_ids:LENGTH = 0 { RETURN FALSE. }
+
+  FOR ag_id IN ag_ids {
+    IF NOT AG_NATIVE_IS_ACTIVE(ag_id) {
+      RETURN FALSE.
+    }.
+  }.
+
+  RETURN TRUE.
+}.
+
+FUNCTION AG_ACTIVE_LABELS {
+  LOCAL active IS LIST().
+
+  FOR label IN AGX_LEGEND:KEYS {
+    IF AG_IS_ACTIVE(label) {
+      active:ADD(label).
+    }.
+  }.
+
+  RETURN active.
+}.
+
+FUNCTION AG_SET_STATE {
+  PARAMETER ag, desired.
+  LOCAL ag_ids IS AG_RESOLVE_IDS(ag).
+  IF ag_ids:LENGTH = 0 { RETURN. }
+
+  FOR ag_id IN ag_ids {
+    LOCAL current IS AG_NATIVE_IS_ACTIVE(ag_id).
+    IF desired AND NOT current {
+      AG_NATIVE_TOGGLE(ag_id).
+    } ELSE IF NOT desired AND current {
+      AG_NATIVE_TOGGLE(ag_id).
+    }.
+  }.
+}.
